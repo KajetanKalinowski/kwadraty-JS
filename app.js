@@ -1,104 +1,99 @@
-let rc = rough.svg(document.querySelector('#svg'))
-//buttuns\/
-const gora = document.querySelector('#gora')
-const dol = document.querySelector('#dol')
-const prawo = document.querySelector('#prawo')
-const lewo = document.querySelector('#lewo')
-const startu = document.querySelector('#start')
-//buttons/\
+const svg = document.querySelector("#svg");
+let rc = rough.svg(svg);
+const widthConst = 100
+const heightConst = 100
+const defHeight = (document.getElementById("svgCont").offsetHeight / 2) - (heightConst/2);
+const defWidth = (document.getElementById("svgCont").offsetWidth / 2) - (widthConst/2);
 var config = {
-    "x": 900,
-    "y": 300,
-    "gap": 30,
-    "width": 100,
-    "height": 100
+  directions: [{y:defHeight,x:defWidth}],
+  data: {width: widthConst, height: heightConst, gap: 30 },
+};
+let init = rc.rectangle(defWidth, defHeight, config.data.width, config.data.height,{fill: "red",fillStyle:"solid", strokeWidth: 5,roughness: 3});
+var currentIndex = { x: 0, y: 0 };
+svg.appendChild(init);
+var controls = document.getElementsByClassName("controls");
+for (let i = 0; i <= controls.length - 1; i++) {
+  controls[i].addEventListener("click", (e) => {
+    generateItems(e.target.id);
+  });
 }
-startu.addEventListener("click",()=>{
-    start(config.x,config.y,config.width,config.height)
-    startu.style.display='none'
-    gora.style.display='block'
-    dol.style.display='block'
-    prawo.style.display='block'
-    lewo.style.display='block'
-})
-function start(){
-let kwadrat=rc.rectangle(config.x,config.y,config.width,config.height,{})
-svg.appendChild(kwadrat)
-
+function generateItems(direction) {
+  let x = config.directions[config.directions.length-1].x
+  let y = config.directions[config.directions.length-1].y
+  console.log(x,y)
+  switch (direction) {
+    case "left":
+      x-=config.data.width +config.data.gap
+      break;
+    case "right":
+      x+=config.data.width +config.data.gap
+      break;
+    case "bottom":
+      y+=config.data.height +config.data.gap
+      break;
+    case "top":
+      y-=config.data.height +config.data.gap
+      break;
+  }
+  if(!config.directions.some(el => el.x===x && el.y===y)){
+    generateRect(x,y)
+  }
 }
-
-gora.addEventListener("click",()=>{
-    drawGora(config.x,config.y,config.width,config.height)
-})
-
-function drawGora(x,y,width,height){
-    y=y-height-config.gap
-    let kwadrat=rc.rectangle(x,y,width,height)
-    x1=x+width/2
-    y1=y+height
-    x2=x+width/2
-    y2=y+height+config.gap
-
-    svg.appendChild(kwadrat)
-    let line = rc.line(x1,y1,x2,y2); // x1, y1, x2, y2
-    svg.appendChild(line)
-
-    console.log(x1,y1)
-    console.log(x2,y2)
-    console.log(x,y)
-    config.y=y
+function generateRect(x,y){
+  let xBack = config.directions[config.directions.length-1].x
+  let yBack = config.directions[config.directions.length-1].y
+const ne = rc.rectangle(x, y, config.data.width, config.data.height,{fill:"green",fillStyle:"solid"});
+svg.appendChild(ne)
+var line
+if(xBack>x){
+  line = rc.line(xBack,yBack+(config.data.height/2),x+config.data.width,y+(config.data.height/2))
 }
-dol.addEventListener("click",()=>{
-    drawDol(config.x,config.y,config.width,config.height)
-})
-function drawDol(x,y,width,height){
-    y=height+config.gap+y
-    let kwadrat=rc.rectangle(x,y,width,height)
-    
-    x1=x+width/2
-    y1=config.y+height
-    x2=x+width/2
-    y2=config.y+height+config.gap
-    
-    svg.appendChild(kwadrat)
-    let line = rc.line(x1,y1,x2,y2); // x1, y1, x2, y2
-    svg.appendChild(line)
-    
-    config.y=y
+else if(xBack<x){
+  line = rc.line(xBack+config.data.width,yBack+(config.data.height/2),x,y+(config.data.height/2))
 }
-prawo.addEventListener("click",()=>{
-    drawPrawo(config.x,config.y,config.width,config.height)
-})
-function drawPrawo(x,y,width,height){
-    x=width+config.gap+x
-    let kwadrat=rc.rectangle(x,y,width,height)
-    
-    x1=config.x+width
-    y1=y+height/2
-    x2=config.x+height+config.gap
-    y2=y+height/2
-    
-    svg.appendChild(kwadrat)
-    let line = rc.line(x1,y1,x2,y2); // x1, y1, x2, y2
-    svg.appendChild(line)
-    
-    config.x=x
+else if(yBack>y){
+  line = rc.line(xBack+(config.data.width/2),yBack,x+(config.data.width/2),y+config.data.height)
 }
-lewo.addEventListener("click",()=>{
-    drawLewo(config.x,config.y,config.width,config.height)
-})
-function drawLewo(x,y,width,height){
-    x=config.x-width-config.gap
-    let kwadrat=rc.rectangle(x,y,width,height)
-    
-    x1=x+width+config.gap
-    y1=y+height/2
-    x2=x+width
-    y2=y+height/2
-    
-    svg.appendChild(kwadrat)
-    let line = rc.line(x1,y1,x2,y2); // x1, y1, x2, y2
-    svg.appendChild(line)
-    console.log(x,y)
-    config.x=x
+else{
+  line = rc.line(xBack+(config.data.width/2),yBack+config.data.height,x+(config.data.width/2),y)
+}
+svg.appendChild(line)
+var temp = {"y":y,"x":x};
+console.log(config.directions)
+console.log(temp)
+hideButtons(x,y)
+config.directions.push(temp)
+}
+function hideButtons(x,y){
+  for(var i=0;i<=3;i++){
+    let tempx =x
+    let tempy =y
+    let direction
+    switch(i){
+      case 0:
+        tempx+=config.data.width+config.data.gap
+        direction = "right"
+        break;
+      case 1:
+        tempx-=config.data.width+config.data.gap
+        direction = "left"
+        break;
+      case 2:
+        tempy+=config.data.height+config.data.gap
+        direction = "bottom"
+        break;
+      case 3:
+        tempy-=config.data.height+config.data.gap
+        direction = "top"
+        break;
+    }
+    if(config.directions.some(el => el.x==tempx && el.y==tempy)){
+      console.log(direction)
+      document.querySelector(`#${direction}`).style.visibility= "hidden"
+    }
+    else{
+      console.log(tempx,tempy)
+      document.querySelector(`#${direction}`).style.visibility = "visible"
+    }
+  }
 }

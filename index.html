@@ -8,22 +8,22 @@
     <title>Kwadraty</title>
 </head>
 <body>
-    <svg id="svg">
-
-    </svg>
-    <div id="div">
-        <div id="int">
-        <div id="d0"></div>
-        <div id="d1"><button id="gora" style="display: none;">⬆️</button></div>
-        <div id="d01"></div>
-        <div id="d3"><button id="lewo" style="display: none;">⬅️</button></div>
-        <div id="d02"><button id="start">START</button></div>
-        <div id="d2"><button id="prawo" style="display: none;">➡️</button></div>
-        <div id="d03"></div>
-        <div id="d4"><button id="dol" style="display: none;">⬇️</button></div>
-        <div id="d04"></div>
-    </div>
-    </div>
+    <div id="svgCont">
+        <svg id="svg"></svg>
+      </div>
+      <div id="interface">
+        <div>
+        <button id="top" class="controls">⬆️</button>
+      </div>
+      <div id="leftRight">
+        <button id="left" class="controls">⬅️</button>
+        <button id="right" class="controls">➡️</button>
+      </div>
+      <div>
+        <button id="bottom" class="controls">⬇️</button>
+      </div>
+      </div>
+    
     <script src="app.js"></script>
 </body>
 </html>
